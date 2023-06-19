@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+	<title>ajax練習</title>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+	<script>
+		//初期設定
+		$(function () {
+			$('#btn1').click(function () {
+				sendRequest('content1.html', content1);
+			});
+		});
+
+		//ajax実行処理
+		function sendRequest(ajax_url, callBackFunction) {
+			$.ajax({
+				url: ajax_url,
+				dataType: 'html',
+				type: 'POST',
+				success: callBackFunction,
+			});
+		}
+
+		//callback関数
+		function content1(data) {
+			$('#result').text("");
+			$('#result').html(data);
+		}
+	</script>
+	<style>
+		#btn1 {
+			padding: 10px 15px;
+			border: 1px solid #ccc;
+			width: 200px;
+			text-align: center;
+			background-color: #FF99FF;
+			cursor: pointer;
+		}
+	</style>
+</head>
+
+<body>
+	<div id="container">
+		<div id="btn1">総選挙の結果は?</div>
+		<div id="result"></div>
+	</div>
+
+</body>
+
+</html>
