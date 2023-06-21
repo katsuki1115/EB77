@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+	<title>ajax練習</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+	<script>
+		//初期設定
+		$(function () {
+			$('#btn3').click(function () {
+				member = $('#member').val();
+				params = {"member": member}
+				sendRequest('/EB77/ajax1-java/content3.jsp', params, content3);
+			});
+		});
+
+		//ajax実行処理
+		function sendRequest(ajax_url, params, callBackFunction) {
+			$.ajax({
+				url: ajax_url,
+				dataType: 'json',
+				data: params,
+				type: 'POST',
+				success: callBackFunction,
+			});
+		}
+
+		//callback関数
+		function content3(data) {
+			$('#result').text("");
+			$('#result').append('<table border="1">');
+			$.each(data,function(){
+				$('#result table').append(
+					'<tr><td>' + this.name + '</td>' + '<td>' + this.vote + '　票</td></tr>'
+				);
+			});
+		}
+	</script>
+	<style>
+		html, body{
+			height: 100%;
+			margin: 0;
+			padding: 0;
+		}
+		
+		#container{
+			width: 232px;
+			margin: 0 auto;
+		}
+		
+		#btn3 {
+			padding: 10px 15px;
+			border: 1px solid #ccc;
+			width: 200px;
+			text-align: center;
+			background-color: #FF99FF;
+			cursor: pointer;
+		}
+
+		#member {
+			width: 232px;
+			margin: 10px 0;
+			font-size: 1.5em;
+		}
+		
+		#result{
+			margin: 10px 0;
+		}
+	</style>
+</head>
+
+<body>
+	<div id="container">
+		<select id="member">
+			<option value="0">内田真礼</option>
+			<option value="1">水瀬いのり</option>
+			<option value="2">石見舞奈香</option>
+			<option value="3">下野紘</option>
+			<option value="4">上坂すみれ</option>
+			<option value="5">前田佳織里</option>
+			<option value="6">花澤香菜</option>
+		</select>
+		<div id="btn3">投票する</div>
+		<div id="result"></div>
+	</div>
+
+</body>
+
+</html>

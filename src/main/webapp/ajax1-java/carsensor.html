@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+	<title>ajax練習</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+	<script>
+		var key = 'ddd1790430154f33';
+		var api_url_area = 'https://webservice.recruit.co.jp/carsensor/large_area/v1/?format=json&key=' + key;
+		var api_url_pref = 'https://webservice.recruit.co.jp/carsensor/pref/v1/?format=json&key=' + key;
+		var api_url_brand = 'https://webservice.recruit.co.jp/carsensor/brand/v1/?format=json&key=' + key;
+		var api_url_bodytype = 'https://webservice.recruit.co.jp/carsensor/body/v1/?format=json&key=' + key;
+		var api_url_usedcar = 'https://webservice.recruit.co.jp/carsensor/usedcar/v1/?format=json&key=' + key;
+
+		//初期設定
+		$(function () {
+			$('#area').on('change', function () {
+				//都道府県情報の取得
+				getPrefecture();
+			});
+
+			$('#search').click(function () {
+				//中古車情報の取得
+				getUsedCar();
+			});
+			//ブランド情報の取得
+			getBrand();
+			//ボディタイプ情報
+			getBodyType();
+			//大エリア情報の取得
+			getArea();
+		});
+
+		//API実行処理
+		function sendRequest(url, callBackFunction) {
+			$(function () {
+				$.ajax({
+					url: 'carsensor',
+					dataType: 'json',
+					data: {'url': url},
+					type: 'POST',
+					success: callBackFunction,
+				});
+			});
+		}
+
+		//ブランド情報の取得
+		function getBrand() {
+			var brand_url = api_url_brand;
+			sendRequest(brandResult);
+		}
+
+		//ブランド情報のコールバック関数
+		function brandResult(data) {
+			var brand = $('#brand');
+			brand.children().remove();
+			brand.append($('<option>').val('').text('選択'));
+			$(data.results.brand).each(function () {
+				brand.append(
+					$('<option>').val(this.code).text(this.name)
+				);
+			});
+		}
+
+		//ボディタイプ情報の取得
+		function getBodyType() {
+			var bodytype_url = api_url_bodytype;
+			sendRequest(bodytype_url, bodytypeResult);
+		}
+
+		//ボディタイプ情報のコールバック関数
+		function bodytypeResult(data) {
+			var bodytype = $('#bodytype');
+			bodytype.children().remove();
+			bodytype.append($('<option>').val('').text('選択'));
+			$(data.results.body).each(function () {
+				bodytype.append(
+					$('<option>').val(this.code).text(this.name)
+				);
+			});
+		}
+
+		//大エリア情報の取得
+		function getArea() {
+			var area_url = api_url_area;
+			sendRequest(area_url, areaResult);
+		}
+
+		//大エリア情報のコールバック関数
+		function areaResult(data) {
+			var area = $('#area');
+			bodytype.children().remove();
+			bodytype.append($('<option>').val('').text('選択'));
+			$(data.results.area).each(function () {
+				bodytype.append(
+					$('<option>').val(this.code).text(this.name)
+				);
+			});
+		}
+
+		//都道府県情報の取得
+		function getPrefecture() {
+			var large_area = $('#area').val();
+			var pref_url = api_url_pref + '&large_area=' + large_area;
+			sendRequest(pref_url, prefResult);
+		}
+
+		//都道府県情報のコールバック関数
+		function prefResult(data) {
+			var pref = $('#pref');
+			bodytype.children().remove();
+			bodytype.append($('<option>').val('').text('選択'));
+			$(data.results.pref).each(function () {
+				bodytype.append(
+					$('<option>').val(this.code).text(this.name)
+				);
+			});
+		}
+
+		//中古車検索処理
+		function getUsedCar() {
+			var pref_cd = $('#pref').val();
+			var brand_cd = $('#brand').val();
+			var bodytype_cd = $('#bodytype').val();
+			if (pref_cd != '') {
+				var usedcar_url = api_url_usedcar + '&pref=' + pref_cd + '&brand=' + brand_cd + '&body=' + bodytype_cd;
+				sendRequest(usedcar_url, usedCarResult);
+			}
+		}
+
+		//中古車検索のコールバック関数
+		function usedCarresults(data) {
+			$('#results').text('');
+			$('#results').append('検索結果：' + data.results.results_returned);
+			if (data.results.results_returned == 0) {
+				return false;
+			}
+			var cars = data.results.usedcar;
+			$('#results').append('<table border="1">');
+			$.each(cars, function () {
+				$('#results table').append('<tr>');
+				$('#results table tr:last-child').append('<td><img src="' + this.photo.main.s + '" /><td>');
+				$('#results table tr:last-child').append('<td>' + this.brand.name + ' | ' + '<a href"' + this.urls.pc + '" target="_blank">' + this.model + '' + this.grade + '</a><br />' + this.desc + '<br />' + this.body.name + ' | ' + this.color + ' | ' + this.warranty_distnce + ' | ' + this.warranty_length + '<br />' + '店名：' + this.shop.name + '<br />' + '</td>');
+				$('#results table tr:last-child').append(
+					'<td>距離:' + this.odd + '<br />' +
+					'年式:' + this.year + '<br />' +
+					'車検:' + this.inspection + '<br />' +
+					'金額:' + this.price + '<br />' + '</td>'
+				);
+			});
+		}
+	</script>
+</head>
+
+<body>
+	<div id="container">
+		<div><strong>中古車検索</strong></div>
+		<form name="frm1">
+			<div>ブランド：<select id="brand"></select></div>
+			<div>ボディタイプ：<select id="bodytype"></select></div>
+			<hr />
+			<div>エリア：<select id="area"></select></div>
+			<div>都道府県：<select id="bodytype"></select></div>
+			<hr />
+			<div><input type="button" value="検索" id="search"></div>
+			<hr />
+			<div id="results"></div>
+			
+		</form>
+	</div>
+	
+</body>
+
+</html>

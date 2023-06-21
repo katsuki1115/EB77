@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+	<title>ajax練習</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+	<script>
+		//初期設定
+		$(function () {
+			$('#btn2').click(function () {
+				year = $('#year').val();
+				params = {"year": year}
+				sendRequest('content2.jsp', params, content2);
+			});
+		});
+
+		//ajax実行処理
+		function sendRequest(ajax_url, params, callBackFunction) {
+			$.ajax({
+				url: ajax_url,
+				dataType: 'html',
+				data: params,
+				type: 'GET',
+				success: callBackFunction,
+			});
+		}
+
+		//callback関数
+		function content2(data) {
+			$('#result').text("");
+			$('#result').html(data);
+		}
+	</script>
+	<style>
+		#btn2 {
+			padding: 10px 15px;
+			border: 1px solid #ccc;
+			width: 200px;
+			text-align: center;
+			background-color: #FF99FF;
+			cursor: pointer;
+		}
+
+		#year {
+			width: 232px;
+			margin: 10px 0;
+			font-size: 1.5em;
+		}
+	</style>
+</head>
+
+<body>
+	<div id="container">
+		<select id="year">
+			<option value="2009">2009年</option>
+			<option value="2010">2010年</option>
+			<option value="2011">2011年</option>
+		</select>
+		<div id="btn2">総選挙の結果は？</div>
+		<div id="result"></div>
+	</div>
+
+</body>
+
+</html>

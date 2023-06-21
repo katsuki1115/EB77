@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+	<title>ajax練習</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+	<script>
+		//初期設定
+		$(function () {
+			$('#btn4').click(function () {
+				$("#loader").fadeIn();
+				movie = $('#movies').val();
+				params = {"movie": movie}
+				sendRequest('content4.jsp', params, content4);
+			});
+		});
+
+		//ajax実行処理
+		function sendRequest(ajax_url, params, callBackFunction) {
+			$.ajax({
+				url: ajax_url,
+				dataType: 'html',
+				data: params,
+				type: 'POST',
+				success: callBackFunction,
+			});
+		}
+
+		//callback関数
+		function content4(data) {
+			$('#result').text("");
+			$('#result').html(data);
+			$("#loader").fadeOut();
+		}
+	</script>
+	<style>
+		html, body{
+			height: 100%;
+			margin: 0;
+			padding: 0;
+		}
+		
+		#container{
+			width: 232px;
+			margin: 0 auto;
+		}
+		
+		#btn4 {
+			padding: 10px 15px;
+			border: 1px solid #ccc;
+			width: 200px;
+			text-align: center;
+			background-color: #FF99FF;
+			cursor: pointer;
+		}
+
+		#movies {
+			width: 560px;
+			margin: 10px 0;
+			font-size: 1.5em;
+		}
+		
+		#result{
+			margin: 10px 0;
+		}
+		
+		#loader{
+			display:none;
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background: url(http://no1s.biz/kenshu/image/loader.gif) no-repeat center center #CCC;
+			opacity: 0.5;
+			z-index: 9999;
+		}
+	</style>
+</head>
+
+<body>
+	<div id="loader"></div>
+	<div id="container">
+		<select id="movies">
+			<option value="0">絆ノ奇跡</option>
+			<option value="1">フライングゲット</option>
+			<option value="2">Never ending symphony</option>
+			<option value="3">恋するフォーチュンクッキー</option>
+		</select>
+		<div id="btn4">再生する</div>
+		<div id="result"></div>
+	</div>
+
+</body>
+
+</html>
